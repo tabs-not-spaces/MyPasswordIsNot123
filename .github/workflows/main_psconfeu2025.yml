@@ -35,6 +35,6 @@ jobs:
         id: fa
         with:
           app-name: 'PSConfEU2025'
-          slot-name: 'Production'
+          sku: 'flexconsumption'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           
