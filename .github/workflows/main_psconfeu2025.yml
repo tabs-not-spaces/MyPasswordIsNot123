@@ -1,7 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy PowerShell project to Azure Function App - PSConfEU2025
+name: Build and deploy Powershell project to Azure Function App - PSConfEU2025
 
 on:
   push:
@@ -11,83 +11,30 @@ on:
 
 env:
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
-  AZURE_FUNCTIONAPP_NAME: 'PSConfEU2025'
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     permissions:
-      id-token: write # This is required for requesting the JWT for workload identity federation
-      contents: read # This is required for actions/checkout
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
 
     steps:
       - name: 'Checkout GitHub Action'
         uses: actions/checkout@v4
-
-      - name: 'Setup PowerShell'
-        uses: actions/setup-powershell@v1
-        with:
-          pwsh: true
-
-      - name: 'Validate PowerShell syntax'
-        shell: pwsh
-        run: |
-          Write-Host "Validating PowerShell syntax..."
-          Get-ChildItem -Path . -Recurse -Filter "*.ps1" | ForEach-Object {
-            Write-Host "Checking $($_.FullName)"
-            $errors = $null
-            $null = [System.Management.Automation.PSParser]::Tokenize((Get-Content $_.FullName -Raw), [ref]$errors)
-            if ($errors) {
-              Write-Error "Syntax errors found in $($_.FullName): $($errors -join ', ')"
-              exit 1
-            }
-          }
-          Write-Host "All PowerShell files have valid syntax."
-
-      - name: 'Login to Azure'
+      
+      - name: Login to Azure
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.CLIENT_ID }}
           tenant-id: ${{ secrets.TENANT_ID }}
           subscription-id: ${{ secrets.SUBSCRIPTION_ID }}
 
-      - name: 'Prepare deployment package'
-        shell: pwsh
-        run: |
-          Write-Host "Preparing deployment package..."
-          # Ensure all required files are present
-          $requiredFiles = @('host.json', 'requirements.psd1')
-          foreach ($file in $requiredFiles) {
-            if (-not (Test-Path $file)) {
-              Write-Error "Required file $file is missing"
-              exit 1
-            }
-            Write-Host "✓ Found $file"
-          }
-          
-          # Validate function.json files
-          Get-ChildItem -Path . -Recurse -Filter "function.json" | ForEach-Object {
-            try {
-              $json = Get-Content $_.FullName -Raw | ConvertFrom-Json
-              Write-Host "✓ Valid function.json: $($_.Directory.Name)"
-            } catch {
-              Write-Error "Invalid function.json in $($_.Directory.Name): $($_.Exception.Message)"
-              exit 1
-            }
-          }
-
-      - name: 'Deploy to Azure Functions'
+      - name: 'Run Azure Functions Action'
         uses: Azure/functions-action@v1
-        id: deploy-to-function
+        id: fa
         with:
-          app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
+          app-name: 'PSConfEU2025'
           slot-name: 'Production'
           package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
-          respect-funcignore: true
-
-      - name: 'Post-deployment verification'
-        shell: pwsh
-        run: |
-          Write-Host "Deployment completed successfully!"
-          Write-Host "Function App URL: https://${{ env.AZURE_FUNCTIONAPP_NAME }}.azurewebsites.net"
           
