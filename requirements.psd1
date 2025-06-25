@@ -2,6 +2,12 @@
 # See https://aka.ms/functionsmanageddependency for additional information.
 #
 @{
-    # For latest supported version, go to 'https://www.powershellgallery.com/packages/Az'. Uncomment the next line and replace the MAJOR_VERSION, e.g., 'Az' = '5.*'
-    # 'Az' = 'MAJOR_VERSION.*'
+    # For latest supported version, go to 'https://www.powershellgallery.com/packages/Az'. 
+    # Uncomment the next line if you need Azure PowerShell modules
+    # 'Az' = '12.*'
+    
+    # Add any other PowerShell modules your functions require here
+    # Example:
+    # 'ImportExcel' = '7.*'
+    # 'PnP.PowerShell' = '2.*'
 }

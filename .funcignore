@@ -1,7 +1,46 @@
+# Azure Functions ignore file
+# https://docs.microsoft.com/en-us/azure/azure-functions/functions-reference
+
+# Git files
 .git*
 .vscode
+.github/
+
+# Azure Storage Emulator files
 __azurite_db*__.json
 __blobstorage__
 __queuestorage__
+
+# Local development files
 local.settings.json
-test
+*.local.json
+
+# Test files
+test/
+tests/
+*.test.ps1
+
+# Build outputs
+bin/
+obj/
+
+# Log files
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Documentation
+README.md
+*.md
+
+# IDE files
+*.swp
+*.swo
+*~
